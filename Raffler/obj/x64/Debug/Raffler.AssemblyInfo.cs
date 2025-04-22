@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyDescriptionAttribute("A sample plugin.")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("0.0.0.1")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("0.0.0.1+395bbb6eb9115c99e6d98708e9cb4ef160c43818")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("0.0.0.1+0e7e9b0e89da28ca8b57d527322e9040b107ffc7")]
 [assembly: System.Reflection.AssemblyProductAttribute("Raffler")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Raffler")]
 [assembly: System.Reflection.AssemblyVersionAttribute("0.0.0.1")]
