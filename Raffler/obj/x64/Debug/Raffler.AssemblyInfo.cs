@@ -15,11 +15,11 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyDescriptionAttribute("A sample plugin.")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("0.0.0.1")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("0.0.0.1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("0.0.0.1+54939cac96784016ddb5a13d247d22d062691c47")]
 [assembly: System.Reflection.AssemblyProductAttribute("Raffler")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Raffler")]
 [assembly: System.Reflection.AssemblyVersionAttribute("0.0.0.1")]
-[assembly: System.Reflection.AssemblyMetadataAttribute("RepositoryUrl", "")]
+[assembly: System.Reflection.AssemblyMetadataAttribute("RepositoryUrl", "https://github.com/nilah-xiv/Raffler.git")]
 [assembly: System.Runtime.Versioning.TargetPlatformAttribute("Windows7.0")]
 [assembly: System.Runtime.Versioning.SupportedOSPlatformAttribute("Windows7.0")]
 

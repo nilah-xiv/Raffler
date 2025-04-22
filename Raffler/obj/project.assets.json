@@ -78,11 +78,11 @@
   "project": {
     "version": "0.0.0.1",
     "restore": {
-      "projectUniqueName": "D:\\Dev\\V2\\Raffler\\Raffler.csproj",
+      "projectUniqueName": "D:\\NL2\\Raffler\\Raffler\\Raffler.csproj",
       "projectName": "Raffler",
-      "projectPath": "D:\\Dev\\V2\\Raffler\\Raffler.csproj",
+      "projectPath": "D:\\NL2\\Raffler\\Raffler\\Raffler.csproj",
       "packagesPath": "C:\\Users\\xxnic\\.nuget\\packages\\",
-      "outputPath": "D:\\Dev\\V2\\Raffler\\obj\\",
+      "outputPath": "D:\\NL2\\Raffler\\Raffler\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
