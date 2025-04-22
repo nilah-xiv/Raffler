@@ -3,18 +3,18 @@
   "Name": "Raffler",
   "InternalName": "Raffler",
   "AssemblyVersion": "0.0.0.1",
-  "Description": "Because raffling shouldn't be hard. /raffler",
-  "ApplicableVersion": "any",
+  "Description": "Raffles, in-game. /raffler",
+  "ApplicableVersion": ".1",
   "Tags": [
-    "indev",
+    "Raffles",
     "plugin",
-    "NV"
+    "Nilah"
   ],
   "DalamudApiLevel": 12,
   "LoadRequiredState": 0,
   "LoadSync": false,
   "CanUnloadAsync": false,
   "LoadPriority": 0,
-  "Punchline": "Raffling made easy. /raffler",
+  "Punchline": "Because raffles should be easy",
   "AcceptsFeedback": true
 }
