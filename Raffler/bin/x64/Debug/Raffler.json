@@ -1,0 +1,20 @@
+{
+  "Author": "Nilah Valoryn",
+  "Name": "Raffler",
+  "InternalName": "Raffler",
+  "AssemblyVersion": "0.0.0.1",
+  "Description": "Because raffling shouldn't be hard. /raffler",
+  "ApplicableVersion": "any",
+  "Tags": [
+    "indev",
+    "plugin",
+    "NV"
+  ],
+  "DalamudApiLevel": 12,
+  "LoadRequiredState": 0,
+  "LoadSync": false,
+  "CanUnloadAsync": false,
+  "LoadPriority": 0,
+  "Punchline": "Raffling made easy. /raffler",
+  "AcceptsFeedback": true
+}

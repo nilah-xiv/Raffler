@@ -1,0 +1,10 @@
+D:\Dev\Raffler\SamplePlugin\bin\x64\Debug\goat.png
+D:\Dev\Raffler\SamplePlugin\bin\x64\Debug\SamplePlugin.deps.json
+D:\Dev\Raffler\SamplePlugin\bin\x64\Debug\SamplePlugin.dll
+D:\Dev\Raffler\SamplePlugin\obj\x64\Debug\SamplePlugin.csproj.AssemblyReference.cache
+D:\Dev\Raffler\SamplePlugin\obj\x64\Debug\SamplePlugin.GeneratedMSBuildEditorConfig.editorconfig
+D:\Dev\Raffler\SamplePlugin\obj\x64\Debug\SamplePlugin.AssemblyInfoInputs.cache
+D:\Dev\Raffler\SamplePlugin\obj\x64\Debug\SamplePlugin.AssemblyInfo.cs
+D:\Dev\Raffler\SamplePlugin\obj\x64\Debug\SamplePlugin.csproj.CoreCompileInputs.cache
+D:\Dev\Raffler\SamplePlugin\obj\x64\Debug\SamplePlugin.sourcelink.json
+D:\Dev\Raffler\SamplePlugin\obj\x64\Debug\SamplePlugin.dll
