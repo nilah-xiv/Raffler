@@ -37,3 +37,4 @@ D:\NL2\Raffler\Raffler\obj\x64\Debug\Raffler.dll
 D:\NL2\Raffler\Raffler\bin\x64\Debug\Raffler.deps.json
 D:\NL2\Raffler\Raffler\bin\x64\Debug\Raffler.dll
 D:\NL2\Raffler\Raffler\bin\x64\Debug\raffler.ico
+D:\NL2\Raffler\Raffler\bin\x64\Debug\raffler.png
