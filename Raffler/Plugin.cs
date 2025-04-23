@@ -4,9 +4,9 @@ using Dalamud.Plugin;
 using System.IO;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
-using SamplePlugin.Windows;
+using Raffler.Windows;
 
-namespace SamplePlugin;
+namespace Raffler;
 
 public sealed class Plugin : IDalamudPlugin
 {
