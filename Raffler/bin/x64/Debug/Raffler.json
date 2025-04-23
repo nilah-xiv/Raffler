@@ -2,9 +2,9 @@
   "Author": "Nilah Valoryn",
   "Name": "Raffler",
   "InternalName": "Raffler",
-  "AssemblyVersion": "0.0.0.1",
+  "AssemblyVersion": "1.0.0.0",
   "Description": "Raffles, in-game. /raffler",
-  "ApplicableVersion": ".1",
+  "ApplicableVersion": "any",
   "Tags": [
     "Raffles",
     "plugin",
