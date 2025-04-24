@@ -3,10 +3,6 @@
   "WorkspaceRootPath": "D:\\NL2\\Raffler\\Raffler\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{FB1595B6-7C64-5A97-8C71-070A10F890A3}|Raffler.csproj|d:\\nl2\\raffler\\raffler\\windows\\configwindow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FB1595B6-7C64-5A97-8C71-070A10F890A3}|Raffler.csproj|solutionrelative:windows\\configwindow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{FB1595B6-7C64-5A97-8C71-070A10F890A3}|Raffler.csproj|d:\\nl2\\raffler\\raffler\\windows\\mainwindow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FB1595B6-7C64-5A97-8C71-070A10F890A3}|Raffler.csproj|solutionrelative:windows\\mainwindow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -17,6 +13,14 @@
     {
       "AbsoluteMoniker": "D:0:0:{FB1595B6-7C64-5A97-8C71-070A10F890A3}|Raffler.csproj|d:\\nl2\\raffler\\raffler\\configuration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FB1595B6-7C64-5A97-8C71-070A10F890A3}|Raffler.csproj|solutionrelative:configuration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB1595B6-7C64-5A97-8C71-070A10F890A3}|Raffler.csproj|d:\\nl2\\raffler\\raffler\\windows\\configwindow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB1595B6-7C64-5A97-8C71-070A10F890A3}|Raffler.csproj|solutionrelative:windows\\configwindow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FB1595B6-7C64-5A97-8C71-070A10F890A3}|Raffler.csproj|d:\\nl2\\raffler\\raffler\\windows\\ticketlistwindow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FB1595B6-7C64-5A97-8C71-070A10F890A3}|Raffler.csproj|solutionrelative:windows\\ticketlistwindow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,56 +30,69 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "MainWindow.cs",
               "DocumentMoniker": "D:\\NL2\\Raffler\\Raffler\\Windows\\MainWindow.cs",
               "RelativeDocumentMoniker": "Windows\\MainWindow.cs",
-              "ToolTip": "D:\\NL2\\Raffler\\Raffler\\Windows\\MainWindow.cs",
-              "RelativeToolTip": "Windows\\MainWindow.cs",
-              "ViewState": "AgIAAFAAAAAAAAAAAAAwwD4AAABzAAAAAAAAAA==",
+              "ToolTip": "D:\\NL2\\Raffler\\Raffler\\Windows\\MainWindow.cs*",
+              "RelativeToolTip": "Windows\\MainWindow.cs*",
+              "ViewState": "AgIAADEAAAAAAAAAAAAwwBAAAAADAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-23T01:11:25.986Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "ConfigWindow.cs",
-              "DocumentMoniker": "D:\\NL2\\Raffler\\Raffler\\Windows\\ConfigWindow.cs",
-              "RelativeDocumentMoniker": "Windows\\ConfigWindow.cs",
-              "ToolTip": "D:\\NL2\\Raffler\\Raffler\\Windows\\ConfigWindow.cs",
-              "RelativeToolTip": "Windows\\ConfigWindow.cs",
-              "ViewState": "AgIAABMAAAAAAAAAAAAgwA4AAAA9AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-23T01:09:43.778Z",
+              "WhenOpened": "2025-04-24T03:31:08.815Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "Configuration.cs",
-              "DocumentMoniker": "D:\\NL2\\Raffler\\Raffler\\Configuration.cs",
-              "RelativeDocumentMoniker": "Configuration.cs",
-              "ToolTip": "D:\\NL2\\Raffler\\Raffler\\Configuration.cs",
-              "RelativeToolTip": "Configuration.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAKAAAAAAAAAA==",
+              "Title": "ConfigWindow.cs",
+              "DocumentMoniker": "D:\\NL2\\Raffler\\Raffler\\Windows\\ConfigWindow.cs",
+              "RelativeDocumentMoniker": "Windows\\ConfigWindow.cs",
+              "ToolTip": "D:\\NL2\\Raffler\\Raffler\\Windows\\ConfigWindow.cs",
+              "RelativeToolTip": "Windows\\ConfigWindow.cs",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAowBkAAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-22T23:49:40.214Z",
+              "WhenOpened": "2025-04-24T03:17:19.459Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "Configuration.cs",
+              "DocumentMoniker": "D:\\NL2\\Raffler\\Raffler\\Configuration.cs",
+              "RelativeDocumentMoniker": "Configuration.cs",
+              "ToolTip": "D:\\NL2\\Raffler\\Raffler\\Configuration.cs",
+              "RelativeToolTip": "Configuration.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAwwB4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-24T03:07:37.942Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "TicketListWindow.cs",
+              "DocumentMoniker": "D:\\NL2\\Raffler\\Raffler\\Windows\\TicketListWindow.cs",
+              "RelativeDocumentMoniker": "Windows\\TicketListWindow.cs",
+              "ToolTip": "D:\\NL2\\Raffler\\Raffler\\Windows\\TicketListWindow.cs",
+              "RelativeToolTip": "Windows\\TicketListWindow.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-24T02:58:42.875Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "Plugin.cs",
               "DocumentMoniker": "D:\\NL2\\Raffler\\Raffler\\Plugin.cs",
               "RelativeDocumentMoniker": "Plugin.cs",
               "ToolTip": "D:\\NL2\\Raffler\\Raffler\\Plugin.cs",
               "RelativeToolTip": "Plugin.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAAZAAAAAAAAAA==",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABIAAABRAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-22T02:49:05.287Z",
               "EditorCaption": ""
