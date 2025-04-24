@@ -6,6 +6,8 @@ using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using Raffler.Windows;
 using Dalamud.Game.ClientState.Objects;
+using Raffler.Data;
+using System.Collections.Generic;
 
 namespace Raffler;
 
@@ -28,9 +30,11 @@ public sealed class Plugin : IDalamudPlugin
     private MainWindow MainWindow { get; init; }
 
     private TicketListWindow ticketListWindow { get; init; }
+    public List<TicketEntry> Entries { get; private set; } = new();
 
 
-   
+
+
 
     public Plugin()
     {
@@ -41,8 +45,9 @@ public sealed class Plugin : IDalamudPlugin
 
 
         ConfigWindow = new ConfigWindow(this);
-        MainWindow = new MainWindow(this, iconImagePath,ticketListWindow);
-        ticketListWindow = new TicketListWindow();
+        ticketListWindow = new TicketListWindow(this);
+        MainWindow = new MainWindow(this, iconImagePath, ticketListWindow);
+
 
         WindowSystem.AddWindow(ConfigWindow);
         WindowSystem.AddWindow(MainWindow);

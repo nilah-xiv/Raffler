@@ -6,6 +6,7 @@ using Dalamud.Interface.Windowing;
 using Dalamud.Game.ClientState.Objects.Types;
 using ImGuiNET;
 using Lumina.Excel.Sheets;
+using Raffler.Data;
 
 namespace Raffler.Windows;
 
@@ -14,7 +15,10 @@ public class MainWindow : Window, IDisposable
     private string RafflerImg;
     private Plugin Plugin;
     private readonly TicketListWindow ticketListWindow;
-   
+    private int ticketCount = 1;
+    private string playerName = "";
+    private bool playerNameAutoFilled = false;
+
 
     // We give this window a hidden ID using ##
     // So that the user will see "My Amazing Window" as window title,
@@ -133,8 +137,7 @@ public class MainWindow : Window, IDisposable
                 ImGui.Separator();
                 ImGui.TextUnformatted("🎫 Ticket Entry");
 
-                var ticketCount = 1;
-                var playerName = "";
+               
                 
                 // Player name input
                 ImGui.InputText("Player Name", ref playerName, 64);
@@ -175,15 +178,26 @@ public class MainWindow : Window, IDisposable
                 {
                     if (!string.IsNullOrWhiteSpace(playerName))
                     {
-                        // TODO: add to ticket system
-                        Plugin.Log.Info($"[Raffle] Added {playerName} - {ticketCount} + {bonusTickets} bonus = {ticketCount + bonusTickets} tickets for {totalCost:N0}g");
-                        // Optionally display a little toast or sound here
+                        var entry = new TicketEntry
+                        {
+                            PlayerName = playerName.Trim(),
+                            BaseTickets = ticketCount,
+                            BonusTickets = bonusTickets
+                        };
+
+                        Plugin.Entries.Add(entry);
+
+                        // Reset inputs
+                        playerName = "";
+                        ticketCount = 1;
+                        //playerNameAutoFilled = false;
                     }
                     else
                     {
                         ImGui.TextColored(new Vector4(1f, 0.2f, 0.2f, 1f), "⚠ Please enter a player name.");
                     }
                 }
+
 
             }
         }
