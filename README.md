@@ -15,13 +15,13 @@ A lightweight Dalamud plugin for Final Fantasy XIV that allows players to run in
 
 ---
 ❌ TO DO ❌
-Add the ticket number ranges.
-Add starting pot.
-Save the a csv locally just incase a crash, the tickets wont be lost and the session can be resumed. 
-Push results to discord.
+- Add the ticket number ranges.
+- Add starting pot.
+- Save the a csv locally just incase a crash, the tickets wont be lost and the session can be resumed. 
+- Push results to discord.
 
 Add some metrics at the bottom:
-Tickets sold # | Gil received
+- Tickets sold # | Gil received
 
 ---
 ## 📸 Screenshots
