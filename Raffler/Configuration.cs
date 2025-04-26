@@ -27,6 +27,7 @@ public class Configuration : IPluginConfiguration
     public int BogoBonusTickets = 1;
     public float TicketCost = 500f;
 
+
     // the below exist just to make saving less cumbersome
 
     public void Save()

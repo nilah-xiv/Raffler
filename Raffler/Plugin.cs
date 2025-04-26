@@ -8,6 +8,7 @@ using Raffler.Windows;
 using Dalamud.Game.ClientState.Objects;
 using Raffler.Data;
 using System.Collections.Generic;
+using System.Text.Json;
 
 namespace Raffler;
 
@@ -31,7 +32,8 @@ public sealed class Plugin : IDalamudPlugin
 
     private TicketListWindow ticketListWindow { get; init; }
     public List<TicketEntry> Entries { get; private set; } = new();
-
+    public int BonusTicketsRemaining { get; set; } = 0;
+    private string TicketSavePath => Path.Combine(PluginInterface.ConfigDirectory.FullName, "raffle_entries.json");
 
 
 
@@ -41,13 +43,10 @@ public sealed class Plugin : IDalamudPlugin
         Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
         var iconImagePath = Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, "raffler.png");
-        MainWindow = new MainWindow(this, iconImagePath,ticketListWindow);
-
-
         ConfigWindow = new ConfigWindow(this);
         ticketListWindow = new TicketListWindow(this);
         MainWindow = new MainWindow(this, iconImagePath, ticketListWindow);
-
+        BonusTicketsRemaining = Configuration.BogoBonusTickets;
 
         WindowSystem.AddWindow(ConfigWindow);
         WindowSystem.AddWindow(MainWindow);
@@ -68,6 +67,7 @@ public sealed class Plugin : IDalamudPlugin
         PluginInterface.UiBuilder.OpenMainUi += ToggleMainUI;
 
         PluginInterface.UiBuilder.OpenMainUi += TicketListUI;
+        LoadEntries(); // Load saved tickets on plugin start
 
         // Add a simple message to the log with level set to information
         // Use /xllog to open the log window in-game
@@ -82,9 +82,25 @@ public sealed class Plugin : IDalamudPlugin
         ConfigWindow.Dispose();
         MainWindow.Dispose();
         ticketListWindow.Dispose();
-        
+        SaveEntries(); 
 
         CommandManager.RemoveHandler(CommandName);
+    }
+    public void SaveEntries()
+    {
+        var json = JsonSerializer.Serialize(Entries);
+        File.WriteAllText(TicketSavePath, json);
+    }
+
+    public void LoadEntries()
+    {
+        if (File.Exists(TicketSavePath))
+        {
+            var json = File.ReadAllText(TicketSavePath);
+            var loaded = JsonSerializer.Deserialize<List<TicketEntry>>(json);
+            if (loaded != null)
+                Entries = loaded;
+        }
     }
 
     private void OnCommand(string command, string args)

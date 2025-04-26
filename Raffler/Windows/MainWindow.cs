@@ -24,8 +24,14 @@ public class MainWindow : Window, IDisposable
     // So that the user will see "My Amazing Window" as window title,
     // but for ImGui the ID is "My Amazing Window##With a hidden ID"
     public MainWindow(Plugin plugin, string raffleimgarg, TicketListWindow ticketListWindow)
-        : base("Raffler##With a hidden ID", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
+     : base("Raffler##With a hidden ID", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
     {
+        Size = new Vector2(460, 560);
+        SizeCondition = ImGuiCond.FirstUseEver;
+
+        Position = new Vector2(600, 200); // Optional
+        PositionCondition = ImGuiCond.FirstUseEver;
+
         SizeConstraints = new WindowSizeConstraints
         {
             MinimumSize = new Vector2(375, 330),
@@ -36,6 +42,7 @@ public class MainWindow : Window, IDisposable
         Plugin = plugin;
         this.ticketListWindow = ticketListWindow;
     }
+
 
     public void Dispose() { }
 
@@ -53,11 +60,17 @@ public class MainWindow : Window, IDisposable
 
 
         }
-        if (ImGui.Button("T/L"))
+        if (ImGui.Button("Current Ticket List"))
         {
 
             Plugin.TicketListUI();
 
+        }
+        if (ImGui.Button("🧹 Reset Raffle Session"))
+        {
+            Plugin.Entries.Clear();
+            Plugin.BonusTicketsRemaining = Plugin.Configuration.BogoBonusTickets;
+            Plugin.SaveEntries();
         }
 
         ImGui.Spacing();
@@ -121,15 +134,31 @@ public class MainWindow : Window, IDisposable
                     ImGui.EndCombo();
                 }
 
-                int bonus = config.BogoBonusTickets;
-                if (ImGui.InputInt("Bonus Tickets For the Session", ref bonus))
+                bool locked = Plugin.Entries.Count > 0;
+
+                // If locked, disable input
+                if (locked)
+                    ImGui.BeginDisabled();
+
+                ImGui.SetNextItemWidth(180f);
+                if (ImGui.InputInt("Bonus Tickets", ref config.BogoBonusTickets))
                 {
-                    config.BogoBonusTickets = Math.Max(0, bonus);
+                    config.BogoBonusTickets = Math.Max(0, config.BogoBonusTickets);
                     config.Save();
                 }
 
+                // End disable block if needed
+                if (locked)
+                    ImGui.EndDisabled();
+
+                // Show a little lock label
+                if (locked)
+                {
+                    ImGui.TextColored(new Vector4(1f, 0.6f, 0.3f, 1f), "🔒 Bonus Tickets locked after first entry");
+                }
+
                 float costK = config.TicketCost / 1000f;
-                if (ImGui.InputFloat("Ticket Cost (k)", ref costK, 1.0f, 5.0f, "%.0f k"))
+                if (ImGui.InputFloat("Ticket Cost (k)", ref costK, 1.0f, 5.0f, "%.0f"))
                 {
                     config.TicketCost = costK * 1000f;
                     config.Save();
@@ -166,7 +195,9 @@ public class MainWindow : Window, IDisposable
                     case BogoType.MaxPerPurchase:
                         bonusTickets = Plugin.Configuration.BogoBonusTickets;
                         break;
+
                 }
+                bonusTickets = Math.Min(bonusTickets, Plugin.BonusTicketsRemaining);
 
                 // Final summary
                 ImGui.TextUnformatted($"➡️ Cost: {totalCost:N0} gil");
@@ -185,19 +216,23 @@ public class MainWindow : Window, IDisposable
                             BonusTickets = bonusTickets
                         };
 
-                        Plugin.Entries.Add(entry);
+                        Plugin.Entries.Add(entry); // First, add it to the list
 
-                        // Reset inputs
-                        playerName = "";
-                        ticketCount = 1;
-                        //playerNameAutoFilled = false;
+                        Plugin.BonusTicketsRemaining = Math.Max(0, Plugin.BonusTicketsRemaining - bonusTickets); // Then, subtract from the pool
+                        Plugin.SaveEntries(); // Then, save the list to disk
+
                     }
                     else
                     {
                         ImGui.TextColored(new Vector4(1f, 0.2f, 0.2f, 1f), "⚠ Please enter a player name.");
                     }
                 }
-
+                #if false
+                if (ImGui.Button("🔄 Reset Bonus Pool"))
+                {
+                    Plugin.BonusTicketsRemaining = Plugin.Configuration.BogoBonusTickets;
+                }
+                #endif
 
             }
         }
