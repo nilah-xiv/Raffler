@@ -15,9 +15,16 @@ A lightweight Dalamud plugin for Final Fantasy XIV that allows players to run in
 
 ---
 ❌ TO DO ❌
-- Add the ticket number ranges.
-- Add starting pot.
-- Save the a csv locally just incase a crash, the tickets wont be lost and the session can be resumed. 
+- Add the ticket number ranges. ✅
+- Add Name prefill via targeting. 
+- Add starting pot. 
+- Save the a csv locally just incase a crash, the tickets wont be lost and the session can be resumed. ✅ (JSON)
+- Simplfied and detailed ticket list views. ✅
+- Prevent number of free BOGOs from changing after first ticket is issued. ✅
+- Override mode.
+- Add confirmation for when clearing raffle session.
+- Add ability to save and see past sessions
+- Add ability to modified names (not ticket numbers) of raffle players. Bonus points for changing 1 name everywhere in 1 swoop.
 - Push results to discord.
 
 Add some metrics at the bottom:
