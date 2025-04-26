@@ -8,7 +8,7 @@ A lightweight Dalamud plugin for Final Fantasy XIV that allows players to run in
 
 ## ✨ Features (ALL WIP)
 
-- ✅ Toggleable raffle system with `/raffle on`, `/raffle off`, and `/raffle draw`
+- ✅ Toggleable raffle system ~~with `/raffle on`, `/raffle off`, and `/raffle draw`~~
 - 🎁 Bonus BOGO tickets for early entries
 - 💬 Configurable trigger word to toggle raffle UI from chat
 - 📈 UI window to review raffle settings and draw a winner
