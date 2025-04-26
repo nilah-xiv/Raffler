@@ -32,8 +32,8 @@ Add some metrics at the bottom:
 
 ---
 ## 📸 Screenshots
+![Preview](https://github.com/user-attachments/assets/dbf6c181-7d0c-4b82-9452-98989e0a252b)
 
-*Nothing ready yet D:*
 
 ---
 
