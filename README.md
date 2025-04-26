@@ -18,7 +18,7 @@ A lightweight Dalamud plugin for Final Fantasy XIV that allows players to run in
 - Add the ticket number ranges. ✅
 - Add Name prefill via targeting. 
 - Add starting pot. 
-- Save the a csv locally just incase a crash, the tickets wont be lost and the session can be resumed. ✅ (JSON)
+- Save the a csv locally just incase a crash, the tickets wont be lost and the session can be resumed. ✅ (JSON) Tested: ✅
 - Simplfied and detailed ticket list views. ✅
 - Prevent number of free BOGOs from changing after first ticket is issued. ✅
 - Override mode.
