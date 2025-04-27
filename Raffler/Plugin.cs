@@ -123,14 +123,15 @@ public sealed class Plugin : IDalamudPlugin
             if (keywordList.Any(keyword => msgText.Contains(keyword, StringComparison.OrdinalIgnoreCase)))
             {
                 var payloadList = new List<Payload>
-                {
-                    new PlayerPayload(ClientState.LocalPlayer!.Name.TextValue, ClientState.LocalPlayer!.HomeWorld.RowId),
-                    new TextPayload(" wants a 🎟️!")
-                };
+            {
+                new TextPayload(sender.TextValue),
+                new TextPayload(" wants a 🎟️!")
+            };
 
                 var newMsg = new SeString(payloadList);
                 ChatGui.Print(newMsg);
             }
         }
     }
+
 }
