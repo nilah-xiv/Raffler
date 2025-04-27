@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyDescriptionAttribute("Raffler, Raffles made easy.")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+18e99ca6a63b8ebcd91f24ded6b831189156b075")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fdc118fc5d500555d51ce9955f14696afb8f72cb")]
 [assembly: System.Reflection.AssemblyProductAttribute("Raffler")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Raffler")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

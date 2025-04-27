@@ -1,14 +1,18 @@
+using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Text.Json;
 using Dalamud.Game.Command;
 using Dalamud.IoC;
 using Dalamud.Plugin;
-using System.IO;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using Raffler.Windows;
-using Dalamud.Game.ClientState.Objects;
 using Raffler.Data;
-using System.Collections.Generic;
-using System.Text.Json;
+using Dalamud.Game.ClientState.Objects;
+using Dalamud.Game.Text;
+using Dalamud.Game.Text.SeStringHandling;
+
 
 namespace Raffler;
 
@@ -21,22 +25,19 @@ public sealed class Plugin : IDalamudPlugin
     [PluginService] internal static IDataManager DataManager { get; private set; } = null!;
     [PluginService] internal static IPluginLog Log { get; private set; } = null!;
     [PluginService] internal static ITargetManager TargetManager { get; private set; } = null!;
+    [PluginService] internal static IChatGui ChatGui { get; private set; } = null!;
 
     private const string CommandName = "/raffler";
 
     public Configuration Configuration { get; init; }
-
     public readonly WindowSystem WindowSystem = new("Raffler");
     private ConfigWindow ConfigWindow { get; init; }
     private MainWindow MainWindow { get; init; }
-
     private TicketListWindow ticketListWindow { get; init; }
+
     public List<TicketEntry> Entries { get; private set; } = new();
     public int BonusTicketsRemaining { get; set; } = 0;
     private string TicketSavePath => Path.Combine(PluginInterface.ConfigDirectory.FullName, "raffle_entries.json");
-
-
-
 
     public Plugin()
     {
@@ -48,31 +49,26 @@ public sealed class Plugin : IDalamudPlugin
         MainWindow = new MainWindow(this, iconImagePath, ticketListWindow);
         BonusTicketsRemaining = Configuration.BogoBonusTickets;
 
+        ChatGui.ChatMessage += OnChatMessage;
+
+
         WindowSystem.AddWindow(ConfigWindow);
         WindowSystem.AddWindow(MainWindow);
         WindowSystem.AddWindow(ticketListWindow);
 
         CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
         {
-            HelpMessage = "A useful message to display in /xlhelp"
+            HelpMessage = "Open the raffle window"
         });
 
         PluginInterface.UiBuilder.Draw += DrawUI;
-
-        // This adds a button to the plugin installer entry of this plugin which allows
-        // to toggle the display status of the configuration ui
         PluginInterface.UiBuilder.OpenConfigUi += ToggleConfigUI;
-
-        // Adds another button that is doing the same but for the main ui of the plugin
         PluginInterface.UiBuilder.OpenMainUi += ToggleMainUI;
-
         PluginInterface.UiBuilder.OpenMainUi += TicketListUI;
-        LoadEntries(); // Load saved tickets on plugin start
 
-        // Add a simple message to the log with level set to information
-        // Use /xllog to open the log window in-game
-        // Example Output: 00:57:54.959 | INF | [SamplePlugin] ===A cool log message from Sample Plugin===
-        Log.Information($"===A cooll log message from {PluginInterface.Manifest.Name}===");
+        LoadEntries();
+
+        Log.Information($"=== Loaded {PluginInterface.Manifest.Name} ===");
     }
 
     public void Dispose()
@@ -82,10 +78,22 @@ public sealed class Plugin : IDalamudPlugin
         ConfigWindow.Dispose();
         MainWindow.Dispose();
         ticketListWindow.Dispose();
-        SaveEntries(); 
+
+        ChatGui.ChatMessage -= OnChatMessage;
 
         CommandManager.RemoveHandler(CommandName);
     }
+
+    private void OnCommand(string command, string args)
+    {
+        ToggleMainUI();
+    }
+
+    private void DrawUI() => WindowSystem.Draw();
+    public void ToggleConfigUI() => ConfigWindow.Toggle();
+    public void ToggleMainUI() => MainWindow.Toggle();
+    public void TicketListUI() => ticketListWindow.Toggle();
+
     public void SaveEntries()
     {
         var json = JsonSerializer.Serialize(Entries);
@@ -103,15 +111,21 @@ public sealed class Plugin : IDalamudPlugin
         }
     }
 
-    private void OnCommand(string command, string args)
+    private void OnChatMessage(XivChatType type, int timestamp, ref SeString sender, ref SeString message, ref bool isHandled)
     {
-        // in response to the slash command, just toggle the display status of our main ui
-        ToggleMainUI();
+        var text = message.TextValue;
+
+        if (type == XivChatType.TellIncoming) // or TellOutgoing if you want
+        {
+            if (text.Contains("raffle", StringComparison.OrdinalIgnoreCase) ||
+                text.Contains("ticket", StringComparison.OrdinalIgnoreCase) ||
+                text.Contains("join", StringComparison.OrdinalIgnoreCase))
+            {
+                Log.Information($"[Raffler] Detected keyword from {sender.TextValue}: {text}");
+            }
+        }
     }
 
-    private void DrawUI() => WindowSystem.Draw();
 
-    public void ToggleConfigUI() => ConfigWindow.Toggle();
-    public void ToggleMainUI() => MainWindow.Toggle();
-    public void TicketListUI() => ticketListWindow.Toggle();
+
 }
