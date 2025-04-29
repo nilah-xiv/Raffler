@@ -7,29 +7,23 @@ using Dalamud.Game.ClientState.Objects.Types;
 using ImGuiNET;
 using Lumina.Excel.Sheets;
 using Raffler.Data;
-
 namespace Raffler.Windows;
 
 public class MainWindow : Window, IDisposable
 {
+
     private string RafflerImg;
     private Plugin Plugin;
     private readonly TicketListWindow ticketListWindow;
     private int ticketCount = 1;
     private string playerName = "";
-    private bool playerNameAutoFilled = false;
 
-
-    // We give this window a hidden ID using ##
-    // So that the user will see "My Amazing Window" as window title,
-    // but for ImGui the ID is "My Amazing Window##With a hidden ID"
     public MainWindow(Plugin plugin, string raffleimgarg, TicketListWindow ticketListWindow)
-     : base("Raffler##With a hidden ID", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
+        : base("Raffler##WithHiddenID", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
     {
         Size = new Vector2(460, 560);
         SizeCondition = ImGuiCond.FirstUseEver;
-
-        Position = new Vector2(600, 200); // Optional
+        Position = new Vector2(600, 200);
         PositionCondition = ImGuiCond.FirstUseEver;
 
         SizeConstraints = new WindowSizeConstraints
@@ -43,197 +37,153 @@ public class MainWindow : Window, IDisposable
         this.ticketListWindow = ticketListWindow;
     }
 
-
     public void Dispose() { }
 
     public override void Draw()
     {
-        // Do not use .Text() or any other formatted function like TextWrapped(), or SetTooltip().
-        // These expect formatting parameter if any part of the text contains a "%", which we can't
-        // provide through our bindings, leading to a Crash to Desktop.
-        // Replacements can be found in the ImGuiHelpers Class
-        ImGui.TextUnformatted($"The random config bool is {Plugin.Configuration.SomePropertyToBeSavedAndWithADefault}");
-
-        if (ImGui.Button("Show Settings"))
+        using (var child = ImRaii.Child("Content", Vector2.Zero, true))
         {
-            Plugin.ToggleConfigUI();
+            if (!child.Success)
+                return;
 
-
-        }
-        if (ImGui.Button("Current Ticket List"))
-        {
-
-            Plugin.TicketListUI();
-
-        }
-        if (ImGui.Button("🧹 Reset Raffle Session"))
-        {
-            Plugin.Entries.Clear();
-            Plugin.BonusTicketsRemaining = Plugin.Configuration.BogoBonusTickets;
-            Plugin.SaveEntries();
-        }
-
-        ImGui.Spacing();
-
-        // Normally a BeginChild() would have to be followed by an unconditional EndChild(),
-        // ImRaii takes care of this after the scope ends.
-        // This works for all ImGui functions that require specific handling, examples are BeginTable() or Indent().
-
-        using (var child = ImRaii.Child("SomeChildWithAScrollbar", Vector2.Zero, true))
-        {
-            if (child.Success)
+            ImGui.TextUnformatted("Welcome to Raffler!");
+            var raffleImgTexture = Plugin.TextureProvider.GetFromFile(RafflerImg).GetWrapOrDefault();
+            if (raffleImgTexture != null)
             {
-                // Draw welcome text and image first
-                ImGui.TextUnformatted("Welcome to:");
-                var raffleimginsert = Plugin.TextureProvider.GetFromFile(RafflerImg).GetWrapOrDefault();
-                if (raffleimginsert != null)
+                using (ImRaii.PushIndent(55f))
                 {
-                    using (ImRaii.PushIndent(55f))
+                    ImGui.Image(raffleImgTexture.ImGuiHandle, new Vector2(256, 256));
+                }
+            }
+
+            ImGuiHelpers.ScaledDummy(20.0f);
+
+            var localPlayer = Plugin.ClientState.LocalPlayer;
+            if (localPlayer != null && localPlayer.ClassJob.IsValid)
+                ImGui.TextUnformatted($"Job: ({localPlayer.ClassJob.RowId}) {localPlayer.ClassJob.Value.Abbreviation.ExtractText()}");
+
+            var territoryId = Plugin.ClientState.TerritoryType;
+            if (Plugin.DataManager.GetExcelSheet<TerritoryType>().TryGetRow(territoryId, out var territoryRow))
+                ImGui.TextUnformatted($"Zone: ({territoryId}) {territoryRow.PlaceName.Value.Name.ExtractText()}");
+
+            ImGui.Separator();
+
+            ImGui.TextUnformatted("\uD83C\uDFAF Raffle Settings");
+
+            var config = Plugin.Configuration;
+
+            if (ImGui.BeginCombo("BOGO Type", config.RaffleBogoType.ToString()))
+            {
+                foreach (var value in Enum.GetValues<BogoType>())
+                {
+                    if (ImGui.Selectable(value.ToString(), value == config.RaffleBogoType))
                     {
-                        ImGui.Image(raffleimginsert.ImGuiHandle, new Vector2(256, 256));
+                        config.RaffleBogoType = value;
+                        config.Save();
                     }
+                }
+                ImGui.EndCombo();
+            }
+
+            bool locked = Plugin.Entries.Count > 0;
+
+            if (locked)
+                ImGui.BeginDisabled();
+
+            ImGui.SetNextItemWidth(180f);
+            if (ImGui.InputInt("Bonus Tickets", ref config.BogoBonusTickets))
+            {
+                config.BogoBonusTickets = Math.Max(0, config.BogoBonusTickets);
+                config.Save();
+            }
+
+            if (locked)
+                ImGui.EndDisabled();
+
+            if (locked)
+                ImGui.TextColored(new Vector4(1f, 0.6f, 0.3f, 1f), "\uD83D\uDD12 Bonus Tickets locked after first entry");
+
+            float costK = config.TicketCost / 1000f;
+            if (ImGui.InputFloat("Ticket Cost (k)", ref costK, 1.0f, 5.0f, "%.0f"))
+            {
+                config.TicketCost = costK * 1000f;
+                config.Save();
+            }
+
+            ImGui.Separator();
+            ImGui.TextUnformatted("\uD83C\uDFAB Ticket Entry");
+
+            ImGui.InputText("Player Name", ref playerName, 64);
+
+            ImGui.SameLine();
+            if (ImGui.Button("@"))
+            {
+                var target = Plugin.TargetManager.Target;
+                if (target != null && target.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.Player)
+                {
+                    playerName = target.Name.TextValue;
+                }
+            }
+
+
+            ImGui.InputInt("Tickets Requested", ref ticketCount);
+            ticketCount = Math.Max(1, ticketCount);
+            
+            //ImGui.SameLine();
+            //if (ImGui.Button("+5")) ticketCount += 5;
+            // ImGui.SameLine();
+            // if (ImGui.Button("+10")) ticketCount += 10;  ugly +5 +10 buttons :(
+
+            var totalCost = ticketCount * config.TicketCost;
+            int bonusTickets = 0;
+
+            switch (config.RaffleBogoType)
+            {
+                case BogoType.Buy1Get1: bonusTickets = ticketCount; break;
+                case BogoType.Buy1Get2: bonusTickets = ticketCount * 2; break;
+                case BogoType.EveryOther: bonusTickets = ticketCount / 2; break;
+                case BogoType.MaxPerPurchase: bonusTickets = config.BogoBonusTickets; break;
+            }
+
+            bonusTickets = Math.Min(bonusTickets, Plugin.BonusTicketsRemaining);
+
+            ImGui.TextUnformatted($"➡️ Cost: {totalCost:N0} gil");
+            ImGui.TextUnformatted($"🎁 Bonus Tickets: {bonusTickets}");
+            ImGui.TextUnformatted($"🎟️ Total Tickets: {ticketCount + bonusTickets}");
+
+            if (ImGui.Button("✅ Confirm Entry"))
+            {
+                if (!string.IsNullOrWhiteSpace(playerName))
+                {
+                    var entry = new TicketEntry
+                    {
+                        PlayerName = playerName.Trim(),
+                        BaseTickets = ticketCount,
+                        BonusTickets = bonusTickets
+                    };
+                    Plugin.Entries.Add(entry);
+                    Plugin.BonusTicketsRemaining = Math.Max(0, Plugin.BonusTicketsRemaining - bonusTickets);
+                    Plugin.SaveEntries();
                 }
                 else
                 {
-                    ImGui.TextUnformatted("Image not found.");
+                    ImGui.TextColored(new Vector4(1f, 0.2f, 0.2f, 1f), "⚠ Please enter a player name.");
                 }
+            }
 
-                ImGuiHelpers.ScaledDummy(20.0f);
+            ImGui.Separator();
 
-                // Zone / class info
-                var localPlayer = Plugin.ClientState.LocalPlayer;
-                if (localPlayer != null && localPlayer.ClassJob.IsValid)
-                {
-                    ImGui.TextUnformatted($"Our current job is ({localPlayer.ClassJob.RowId}) \"{localPlayer.ClassJob.Value.Abbreviation.ExtractText()}\"");
-                }
+            if (ImGui.Button("📋 Current Ticket List"))
+            {
+                Plugin.TicketListUI();
+            }
 
-                var territoryId = Plugin.ClientState.TerritoryType;
-                if (Plugin.DataManager.GetExcelSheet<TerritoryType>().TryGetRow(territoryId, out var territoryRow))
-                {
-                    ImGui.TextUnformatted($"We are currently in ({territoryId}) \"{territoryRow.PlaceName.Value.Name.ExtractText()}\"");
-                }
-
-                ImGui.Separator();
-
-                // Raffle settings *now appear below*
-                ImGui.TextUnformatted("🎯 Raffle Settings");
-
-                var config = Plugin.Configuration;
-
-                var bogoType = config.RaffleBogoType;
-                if (ImGui.BeginCombo("BOGO Type", bogoType.ToString()))
-                {
-                    foreach (var value in Enum.GetValues<BogoType>())
-                    {
-                        if (ImGui.Selectable(value.ToString(), value == bogoType))
-                        {
-                            config.RaffleBogoType = value;
-                            config.Save();
-                        }
-                    }
-                    ImGui.EndCombo();
-                }
-
-                bool locked = Plugin.Entries.Count > 0;
-
-                // If locked, disable input
-                if (locked)
-                    ImGui.BeginDisabled();
-
-                ImGui.SetNextItemWidth(180f);
-                if (ImGui.InputInt("Bonus Tickets", ref config.BogoBonusTickets))
-                {
-                    config.BogoBonusTickets = Math.Max(0, config.BogoBonusTickets);
-                    config.Save();
-                }
-
-                // End disable block if needed
-                if (locked)
-                    ImGui.EndDisabled();
-
-                // Show a little lock label
-                if (locked)
-                {
-                    ImGui.TextColored(new Vector4(1f, 0.6f, 0.3f, 1f), "🔒 Bonus Tickets locked after first entry");
-                }
-
-                float costK = config.TicketCost / 1000f;
-                if (ImGui.InputFloat("Ticket Cost (k)", ref costK, 1.0f, 5.0f, "%.0f"))
-                {
-                    config.TicketCost = costK * 1000f;
-                    config.Save();
-                }
-                ImGui.Separator();
-                ImGui.TextUnformatted("🎫 Ticket Entry");
-
-               
-                
-                // Player name input
-                ImGui.InputText("Player Name", ref playerName, 64);
-
-                // Ticket quantity input
-                ImGui.InputInt("Tickets Requested", ref ticketCount);
-                ticketCount = Math.Max(1, ticketCount);
-
-                // Live price calculation
-                var basePrice = Plugin.Configuration.TicketCost;
-                var totalCost = ticketCount * basePrice;
-
-                // Bonus ticket logic
-                int bonusTickets = 0;
-                switch (Plugin.Configuration.RaffleBogoType)
-                {
-                    case BogoType.Buy1Get1:
-                        bonusTickets = ticketCount;
-                        break;
-                    case BogoType.Buy1Get2:
-                        bonusTickets = ticketCount * 2;
-                        break;
-                    case BogoType.EveryOther:
-                        bonusTickets = ticketCount / 2;
-                        break;
-                    case BogoType.MaxPerPurchase:
-                        bonusTickets = Plugin.Configuration.BogoBonusTickets;
-                        break;
-
-                }
-                bonusTickets = Math.Min(bonusTickets, Plugin.BonusTicketsRemaining);
-
-                // Final summary
-                ImGui.TextUnformatted($"➡️ Cost: {totalCost:N0} gil");
-                ImGui.TextUnformatted($"🎁 Bonus Tickets: {bonusTickets}");
-                ImGui.TextUnformatted($"🎟️ Total Tickets: {ticketCount + bonusTickets}");
-
-                // Action button
-                if (ImGui.Button("✅ Confirm Entry"))
-                {
-                    if (!string.IsNullOrWhiteSpace(playerName))
-                    {
-                        var entry = new TicketEntry
-                        {
-                            PlayerName = playerName.Trim(),
-                            BaseTickets = ticketCount,
-                            BonusTickets = bonusTickets
-                        };
-
-                        Plugin.Entries.Add(entry); // First, add it to the list
-
-                        Plugin.BonusTicketsRemaining = Math.Max(0, Plugin.BonusTicketsRemaining - bonusTickets); // Then, subtract from the pool
-                        Plugin.SaveEntries(); // Then, save the list to disk
-
-                    }
-                    else
-                    {
-                        ImGui.TextColored(new Vector4(1f, 0.2f, 0.2f, 1f), "⚠ Please enter a player name.");
-                    }
-                }
-                #if false
-                if (ImGui.Button("🔄 Reset Bonus Pool"))
-                {
-                    Plugin.BonusTicketsRemaining = Plugin.Configuration.BogoBonusTickets;
-                }
-                #endif
-
+            ImGui.SameLine();
+            if (ImGui.Button("🧹 Reset Raffle Session"))
+            {
+                Plugin.Entries.Clear();
+                Plugin.BonusTicketsRemaining = Plugin.Configuration.BogoBonusTickets;
+                Plugin.SaveEntries();
             }
         }
     }
