@@ -48,45 +48,37 @@ public sealed class Plugin : IDalamudPlugin
     public Plugin()
     {
         Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-
         var iconImagePath = Path.Combine(PluginInterface.AssemblyLocation.Directory!.FullName, "raffler.png");
         ConfigWindow = new ConfigWindow(this);
         TicketListWindow = new TicketListWindow(this);
         MainWindow = new MainWindow(this, iconImagePath, TicketListWindow);
-
         BonusTicketsRemaining = Configuration.BogoBonusTickets;
-
         ChatGui.ChatMessage += OnChatMessage;
-
         WindowSystem.AddWindow(ConfigWindow);
         WindowSystem.AddWindow(MainWindow);
         WindowSystem.AddWindow(TicketListWindow);
+        Raffler.UI.RafflerTheme.Apply();
+
 
         CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
         {
             HelpMessage = "Open Raffler UI."
         });
-
         PluginInterface.UiBuilder.Draw += DrawUI;
         PluginInterface.UiBuilder.OpenConfigUi += ToggleConfigUI;
         PluginInterface.UiBuilder.OpenMainUi += ToggleMainUI;
         PluginInterface.UiBuilder.OpenMainUi += TicketListUI;
-
         LoadEntries();
-
         Log.Information($"=== Raffler plugin {PluginInterface.Manifest} loaded! ===");
     }
 
     public void Dispose()
     {
         WindowSystem.RemoveAllWindows();
-
         ConfigWindow.Dispose();
         MainWindow.Dispose();
         TicketListWindow.Dispose();
-
         ChatGui.ChatMessage -= OnChatMessage;
-
         CommandManager.RemoveHandler(CommandName);
     }
 
