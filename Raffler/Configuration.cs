@@ -6,17 +6,21 @@ namespace Raffler;
 
 public enum BogoType
 {
-    None,
-    Buy1Get1,
-    Buy1Get2,
-    EveryOther,
-    MaxPerPurchase
+    None,           // No bonus
+    Custom,         // Bonus Tickets field shown
+    Buy1Get1,       // 1 bonus per base ticket
+    LimitedSupply   // Pull from a session-wide bonus pool (BOGO Session Limit)
 }
+
 
 
 [Serializable]
 public class Configuration : IPluginConfiguration
 {
+    public int BogoSessionLimit { get; set; } = 0;
+
+    public int StartingGil { get; set; } = 0;
+
     public int Version { get; set; } = 0;
 
     public bool IsConfigWindowMovable { get; set; } = true;

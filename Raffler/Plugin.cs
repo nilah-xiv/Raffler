@@ -30,6 +30,8 @@ public sealed class Plugin : IDalamudPlugin
     [PluginService] internal static IChatGui ChatGui { get; private set; } = null!;
 
     private const string CommandName = "/raffler";
+    public DateTime SessionStartTime { get; set; } = DateTime.Now;
+
 
     public Configuration Configuration { get; init; }
     public readonly WindowSystem WindowSystem = new("Raffler");

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Numerics;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
@@ -8,7 +9,6 @@ using ImGuiNET;
 using Lumina.Excel.Sheets;
 using Raffler.Data;
 namespace Raffler.Windows;
-
 public class MainWindow : Window, IDisposable
 {
 
@@ -57,14 +57,19 @@ public class MainWindow : Window, IDisposable
             }
 
             ImGuiHelpers.ScaledDummy(20.0f);
+//
+ //           var localPlayer = Plugin.ClientState.LocalPlayer;
+//            if (localPlayer != null && localPlayer.ClassJob.IsValid)
+//                ImGui.TextUnformatted($"Job: ({localPlayer.ClassJob.RowId}) {localPlayer.ClassJob.Value.Abbreviation.ExtractText()}");
+//
+            var newTerritoryId = Plugin.ClientState.TerritoryType;
+            if (Plugin.DataManager.GetExcelSheet<TerritoryType>().TryGetRow(newTerritoryId, out var territoryRow))
+            {
+                var house = territoryRow.PlaceName.Value.Name.ExtractText();
+                var houseShort = house.Split(' ').FirstOrDefault() ?? house;
+                ImGui.TextUnformatted($"Zone: ({newTerritoryId}) {houseShort}");
+            }
 
-            var localPlayer = Plugin.ClientState.LocalPlayer;
-            if (localPlayer != null && localPlayer.ClassJob.IsValid)
-                ImGui.TextUnformatted($"Job: ({localPlayer.ClassJob.RowId}) {localPlayer.ClassJob.Value.Abbreviation.ExtractText()}");
-
-            var territoryId = Plugin.ClientState.TerritoryType;
-            if (Plugin.DataManager.GetExcelSheet<TerritoryType>().TryGetRow(territoryId, out var territoryRow))
-                ImGui.TextUnformatted($"Zone: ({territoryId}) {territoryRow.PlaceName.Value.Name.ExtractText()}");
 
             ImGui.Separator();
 
@@ -91,11 +96,33 @@ public class MainWindow : Window, IDisposable
                 ImGui.BeginDisabled();
 
             ImGui.SetNextItemWidth(180f);
-            if (ImGui.InputInt("Bonus Tickets", ref config.BogoBonusTickets))
+            
+
+            if (config.RaffleBogoType == BogoType.Custom)
             {
-                config.BogoBonusTickets = Math.Max(0, config.BogoBonusTickets);
-                config.Save();
+                if (locked) ImGui.BeginDisabled();
+                ImGui.SetNextItemWidth(180f);
+                if (ImGui.InputInt("Custom Bonus Tickets", ref config.BogoBonusTickets))
+                {
+                    config.BogoBonusTickets = Math.Max(0, config.BogoBonusTickets);
+                    config.Save();
+                }
+                if (locked) ImGui.EndDisabled();
             }
+            else if (config.RaffleBogoType == BogoType.LimitedSupply)
+            {
+                if (locked) ImGui.BeginDisabled();
+                ImGui.SetNextItemWidth(180f);
+                int bogoSessionLimit = config.BogoSessionLimit;
+                if (ImGui.InputInt("BOGO Session Limit", ref bogoSessionLimit))
+                {
+                    config.BogoSessionLimit = Math.Max(0, bogoSessionLimit);
+                    config.Save();
+                }
+
+                if (locked) ImGui.EndDisabled();
+            }
+
 
             if (locked)
                 ImGui.EndDisabled();
@@ -139,11 +166,20 @@ public class MainWindow : Window, IDisposable
 
             switch (config.RaffleBogoType)
             {
-                case BogoType.Buy1Get1: bonusTickets = ticketCount; break;
-                case BogoType.Buy1Get2: bonusTickets = ticketCount * 2; break;
-                case BogoType.EveryOther: bonusTickets = ticketCount / 2; break;
-                case BogoType.MaxPerPurchase: bonusTickets = config.BogoBonusTickets; break;
+                case BogoType.None:
+                    bonusTickets = 0;
+                    break;
+                case BogoType.Custom:
+                    bonusTickets = config.BogoBonusTickets;
+                    break;
+                case BogoType.Buy1Get1:
+                    bonusTickets = ticketCount;
+                    break;
+                case BogoType.LimitedSupply:
+                    bonusTickets = Math.Min(ticketCount, Plugin.BonusTicketsRemaining);
+                    break;
             }
+
 
             bonusTickets = Math.Min(bonusTickets, Plugin.BonusTicketsRemaining);
 
@@ -155,16 +191,26 @@ public class MainWindow : Window, IDisposable
             {
                 if (!string.IsNullOrWhiteSpace(playerName))
                 {
+                    // Save session start gil and time *before* adding the first entry
+                    if (Plugin.Entries.Count == 0)
+                    {
+                        Plugin.Configuration.StartingGil = (int)(ticketCount * config.TicketCost);
+                        Plugin.SessionStartTime = DateTime.Now;
+                        Plugin.SaveEntries();
+                    }
+
                     var entry = new TicketEntry
                     {
                         PlayerName = playerName.Trim(),
                         BaseTickets = ticketCount,
                         BonusTickets = bonusTickets
                     };
+
                     Plugin.Entries.Add(entry);
                     Plugin.BonusTicketsRemaining = Math.Max(0, Plugin.BonusTicketsRemaining - bonusTickets);
                     Plugin.SaveEntries();
                 }
+
                 else
                 {
                     ImGui.TextColored(new Vector4(1f, 0.2f, 0.2f, 1f), "⚠ Please enter a player name.");
@@ -183,8 +229,29 @@ public class MainWindow : Window, IDisposable
             {
                 Plugin.Entries.Clear();
                 Plugin.BonusTicketsRemaining = Plugin.Configuration.BogoBonusTickets;
+                Plugin.Configuration.StartingGil = 0;
                 Plugin.SaveEntries();
+                Plugin.SessionStartTime = DateTime.Now;
+
             }
+            var sessionTickets = Plugin.Entries.Sum(e => e.BaseTickets + e.BonusTickets);
+            var gilMade = Plugin.Entries.Sum(e => e.BaseTickets * config.TicketCost);
+            var ticketsPerHour = sessionTickets / Math.Max((DateTime.Now - Plugin.SessionStartTime).TotalHours, 0.01); // avoid div/0
+
+            ImGui.TextColored(new Vector4(1f, 0.4f, 0.4f, 1f), $"🎟 Tickets Sold (Session): {sessionTickets} ({gilMade:N0} gil made)");
+
+            if (ImGui.IsItemHovered())
+            {
+                var profit = gilMade - config.StartingGil;
+
+                ImGui.BeginTooltip();
+                ImGui.Text($"💰 Current Gil: {gilMade:N0}");
+                ImGui.Text($"📦 Starting Amount: {config.StartingGil:N0}");
+                ImGui.Text($"📈 Profit: {profit:N0}");
+                ImGui.Text($"🕒 Tickets per hour: {ticketsPerHour:F2}");
+                ImGui.EndTooltip();
+            }
+
         }
     }
 }
