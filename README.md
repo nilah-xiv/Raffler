@@ -9,7 +9,7 @@
 ## ✨ Current Features
 
 ✅ **Toggleable Raffle System**  
-Start, stop, and draw raffles easily with `/raffler on`, `/raffler off`, and `/raffler draw`.
+Toggle ui with `/raffler`
 
 ✅ **Bonus Tickets for Early Entries**  
 Configurable "BOGO" (Buy One, Get One) bonus tickets for the first players who enter.
@@ -38,36 +38,24 @@ Seamless windows to configure raffles, review entries, and draw winners.
 ✅ **Logging and Debugging**  
 Key actions and errors are cleanly logged via Dalamud's plugin log viewer (`/xllog`).
 
+✅ **Name Prefill via Targeting**  
+Autofill raffle entries using your current in-game target's name.
+
 ---
 
-## 🔥 Coming Soon (Work In Progress)
-
-🔄 **Name Prefill via Targeting**  
-Autofill raffle entries using your current in-game target's name.
 
 🏆 **Starting Pot Configuration**  
 Set an initial prize pool (gil) for the raffle when it begins.
 
-💾 **Session Recovery Improvements**  
-Additional backup save formats (CSV), allowing manual recovery if needed.
-
-📝 **Editable Player Names**  
-Modify names mid-session without changing ticket numbers. Bonus: mass update all occurrences.
 
 💬 **Session History Saving**  
 Save and review past raffle sessions easily for transparency or event history.
-
-🔔 **Discord Integration**  
-Push live results to a Discord webhook automatically when drawing a winner.
 
 🔢 **Metrics Display**  
 Show real-time stats like **Tickets Sold** and **Gil Collected** at the bottom of the raffle window.
 
 ⚠️ **Confirmation Prompts**  
 Add confirmations before clearing active raffles or deleting data.
-
-🛡️ **Override Mode**  
-Admin tools to override BOGO restrictions, manual entry edits, or custom ticket additions.
 
 ---
 
