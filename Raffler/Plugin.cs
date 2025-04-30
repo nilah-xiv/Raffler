@@ -59,7 +59,7 @@ public sealed class Plugin : IDalamudPlugin
         WindowSystem.AddWindow(ConfigWindow);
         WindowSystem.AddWindow(MainWindow);
         WindowSystem.AddWindow(TicketListWindow);
-        Raffler.UI.RafflerTheme.Apply();
+        //Raffler.UI.RafflerTheme.Apply(); removed to fix theme being applied globally 
 
 
         CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)

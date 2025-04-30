@@ -8,10 +8,11 @@ using Dalamud.Game.ClientState.Objects.Types;
 using ImGuiNET;
 using Lumina.Excel.Sheets;
 using Raffler.Data;
+
 namespace Raffler.Windows;
+
 public class MainWindow : Window, IDisposable
 {
-
     private string RafflerImg;
     private Plugin Plugin;
     private readonly TicketListWindow ticketListWindow;
@@ -41,6 +42,8 @@ public class MainWindow : Window, IDisposable
 
     public override void Draw()
     {
+        Raffler.UI.RafflerTheme.Push();
+
         using (var child = ImRaii.Child("Content", Vector2.Zero, true))
         {
             if (!child.Success)
@@ -52,16 +55,12 @@ public class MainWindow : Window, IDisposable
             {
                 using (ImRaii.PushIndent(55f))
                 {
-                    ImGui.Image(raffleImgTexture.ImGuiHandle, new Vector2(256, 256));
+                    ImGui.Image(raffleImgTexture.ImGuiHandle, new Vector2(192, 192));
                 }
             }
 
             ImGuiHelpers.ScaledDummy(20.0f);
-//
- //           var localPlayer = Plugin.ClientState.LocalPlayer;
-//            if (localPlayer != null && localPlayer.ClassJob.IsValid)
-//                ImGui.TextUnformatted($"Job: ({localPlayer.ClassJob.RowId}) {localPlayer.ClassJob.Value.Abbreviation.ExtractText()}");
-//
+
             var newTerritoryId = Plugin.ClientState.TerritoryType;
             if (Plugin.DataManager.GetExcelSheet<TerritoryType>().TryGetRow(newTerritoryId, out var territoryRow))
             {
@@ -70,9 +69,7 @@ public class MainWindow : Window, IDisposable
                 ImGui.TextUnformatted($"Zone: ({newTerritoryId}) {houseShort}");
             }
 
-
             ImGui.Separator();
-
             ImGui.TextUnformatted("\uD83C\uDFAF Raffle Settings");
 
             var config = Plugin.Configuration;
@@ -95,34 +92,31 @@ public class MainWindow : Window, IDisposable
             if (locked)
                 ImGui.BeginDisabled();
 
-            ImGui.SetNextItemWidth(180f);
-            
-
             if (config.RaffleBogoType == BogoType.Custom)
             {
-                if (locked) ImGui.BeginDisabled();
                 ImGui.SetNextItemWidth(180f);
                 if (ImGui.InputInt("Custom Bonus Tickets", ref config.BogoBonusTickets))
                 {
                     config.BogoBonusTickets = Math.Max(0, config.BogoBonusTickets);
                     config.Save();
                 }
-                if (locked) ImGui.EndDisabled();
             }
-            else if (config.RaffleBogoType == BogoType.LimitedSupply)
+
+            ImGui.SetNextItemWidth(180f);
+            int bogoSessionLimit = config.BogoSessionLimit;
+            if (ImGui.InputInt("BOGO Session Limit", ref bogoSessionLimit))
             {
-                if (locked) ImGui.BeginDisabled();
-                ImGui.SetNextItemWidth(180f);
-                int bogoSessionLimit = config.BogoSessionLimit;
-                if (ImGui.InputInt("BOGO Session Limit", ref bogoSessionLimit))
-                {
-                    config.BogoSessionLimit = Math.Max(0, bogoSessionLimit);
-                    config.Save();
-                }
-
-                if (locked) ImGui.EndDisabled();
+                config.BogoSessionLimit = Math.Max(0, bogoSessionLimit);
+                config.Save();
             }
 
+            ImGui.SetNextItemWidth(180f);
+            float costK = config.TicketCost / 1000f;
+            if (ImGui.InputFloat("Ticket Cost (k)", ref costK, 1.0f, 5.0f, "%.0f"))
+            {
+                config.TicketCost = costK * 1000f;
+                config.Save();
+            }
 
             if (locked)
                 ImGui.EndDisabled();
@@ -130,12 +124,18 @@ public class MainWindow : Window, IDisposable
             if (locked)
                 ImGui.TextColored(new Vector4(1f, 0.6f, 0.3f, 1f), "\uD83D\uDD12 Bonus Tickets locked after first entry");
 
-            float costK = config.TicketCost / 1000f;
-            if (ImGui.InputFloat("Ticket Cost (k)", ref costK, 1.0f, 5.0f, "%.0f"))
+            if (locked)
+                ImGui.BeginDisabled();
+
+            int potMil = config.StartingPotMillions;
+            if (ImGui.InputInt("Starting Pot (mil)", ref potMil))
             {
-                config.TicketCost = costK * 1000f;
+                config.StartingPotMillions = Math.Max(0, potMil);
                 config.Save();
             }
+
+            if (locked)
+                ImGui.EndDisabled();
 
             ImGui.Separator();
             ImGui.TextUnformatted("\uD83C\uDFAB Ticket Entry");
@@ -152,14 +152,8 @@ public class MainWindow : Window, IDisposable
                 }
             }
 
-
             ImGui.InputInt("Tickets Requested", ref ticketCount);
             ticketCount = Math.Max(1, ticketCount);
-            
-            //ImGui.SameLine();
-            //if (ImGui.Button("+5")) ticketCount += 5;
-            // ImGui.SameLine();
-            // if (ImGui.Button("+10")) ticketCount += 10;  ugly +5 +10 buttons :(
 
             var totalCost = ticketCount * config.TicketCost;
             int bonusTickets = 0;
@@ -180,7 +174,6 @@ public class MainWindow : Window, IDisposable
                     break;
             }
 
-
             bonusTickets = Math.Min(bonusTickets, Plugin.BonusTicketsRemaining);
 
             ImGui.TextUnformatted($"➡️ Cost: {totalCost:N0} gil");
@@ -191,7 +184,6 @@ public class MainWindow : Window, IDisposable
             {
                 if (!string.IsNullOrWhiteSpace(playerName))
                 {
-                    // Save session start gil and time *before* adding the first entry
                     if (Plugin.Entries.Count == 0)
                     {
                         Plugin.Configuration.StartingGil = (int)(ticketCount * config.TicketCost);
@@ -210,7 +202,6 @@ public class MainWindow : Window, IDisposable
                     Plugin.BonusTicketsRemaining = Math.Max(0, Plugin.BonusTicketsRemaining - bonusTickets);
                     Plugin.SaveEntries();
                 }
-
                 else
                 {
                     ImGui.TextColored(new Vector4(1f, 0.2f, 0.2f, 1f), "⚠ Please enter a player name.");
@@ -232,11 +223,11 @@ public class MainWindow : Window, IDisposable
                 Plugin.Configuration.StartingGil = 0;
                 Plugin.SaveEntries();
                 Plugin.SessionStartTime = DateTime.Now;
-
             }
+
             var sessionTickets = Plugin.Entries.Sum(e => e.BaseTickets + e.BonusTickets);
             var gilMade = Plugin.Entries.Sum(e => e.BaseTickets * config.TicketCost);
-            var ticketsPerHour = sessionTickets / Math.Max((DateTime.Now - Plugin.SessionStartTime).TotalHours, 0.01); // avoid div/0
+            var ticketsPerHour = sessionTickets / Math.Max((DateTime.Now - Plugin.SessionStartTime).TotalHours, 0.01);
 
             ImGui.TextColored(new Vector4(1f, 0.4f, 0.4f, 1f), $"🎟 Tickets Sold (Session): {sessionTickets} ({gilMade:N0} gil made)");
 
@@ -251,7 +242,8 @@ public class MainWindow : Window, IDisposable
                 ImGui.Text($"🕒 Tickets per hour: {ticketsPerHour:F2}");
                 ImGui.EndTooltip();
             }
-
         }
+
+        Raffler.UI.RafflerTheme.Pop();
     }
 }

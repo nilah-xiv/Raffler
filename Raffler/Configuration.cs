@@ -17,6 +17,8 @@ public enum BogoType
 [Serializable]
 public class Configuration : IPluginConfiguration
 {
+    public bool ShowDebugOption { get; set; } = true;
+    public int StartingPotMillions { get; set; } = 10;
     public int BogoSessionLimit { get; set; } = 0;
 
     public int StartingGil { get; set; } = 0;
@@ -32,7 +34,7 @@ public class Configuration : IPluginConfiguration
     public float TicketCost = 500f;
 
 
-    // the below exist just to make saving less cumbersome
+    
 
     public void Save()
     {

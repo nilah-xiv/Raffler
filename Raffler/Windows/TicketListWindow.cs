@@ -10,7 +10,7 @@ namespace Raffler.Windows;
 public class TicketListWindow : Window, IDisposable
 {
     private bool showDiscordView = false;
-    private string discordHeader = "RAFFLE " + DateTime.Now.ToString("M/d/yy") + " — 10MIL STARTING POT";
+    private string discordHeader;
     private readonly Plugin plugin;
 
     public TicketListWindow(Plugin plugin) : base("Raffle Tickets ###raffleTickets")
@@ -20,19 +20,25 @@ public class TicketListWindow : Window, IDisposable
         Flags = ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse;
         Size = new Vector2(300, 400);
         SizeCondition = ImGuiCond.FirstUseEver;
-    }
 
+        // Use configured pot for default header
+        int startingPot = plugin.Configuration.StartingPotMillions;
+        discordHeader = $"RAFFLE {DateTime.Now:M/d/yy} — {startingPot}MIL STARTING POT";
+    }
 
     public void Dispose() { }
 
-
     public override void Draw()
     {
+        Raffler.UI.RafflerTheme.Push();
+
         if (plugin.Entries.Count == 0)
         {
             ImGui.TextUnformatted("🎟 No entries yet!");
+            Raffler.UI.RafflerTheme.Pop();
             return;
         }
+
         ImGui.Checkbox("🧾 Show Discord Style View", ref showDiscordView);
 
         if (showDiscordView)
@@ -66,8 +72,6 @@ public class TicketListWindow : Window, IDisposable
             }
         }
 
-        
-
         ImGui.TextUnformatted($"📋 Raffle Entries ({plugin.Entries.Count})");
         ImGui.Separator();
 
@@ -88,6 +92,7 @@ public class TicketListWindow : Window, IDisposable
             }
             ImGui.SetClipboardText(string.Join("\n", output));
         }
+
         ImGui.Spacing();
         if (ImGui.Button("📋 Export Grouped List"))
         {
@@ -111,9 +116,7 @@ public class TicketListWindow : Window, IDisposable
             var export = string.Join("\n", plugin.Entries.Select(e => e.ToString()));
             ImGui.SetClipboardText(export);
         }
-        
 
+        Raffler.UI.RafflerTheme.Pop();
     }
-
-
 }
