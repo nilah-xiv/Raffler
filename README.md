@@ -1,6 +1,6 @@
 # 🎟️ Nilah's Raffle Plugin
 
-## Want to use this addon? Fork it, build it, allow dev plugins for dalamud and point to the dll. 
+## Want to use this addon? Fork it, build it, allow dev plugins for dalamud and point to the dll. This is no longer being maintained. Screenshot is out of date, but the addon is full featured.
 
 <div align="center">
 <img src="raffler.png" alt="Raffler Logo" width="512" height="512">
